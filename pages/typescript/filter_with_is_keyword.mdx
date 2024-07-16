@@ -1,0 +1,28 @@
+# [타입스크립트] Is 키워드로 배열 필터 후 타입추론 쌉가능
+
+## 결론
+Typescript에서 배열 필터 후, 타입추론이 동작하지 않는 문제 해결법은 두가지이다.
+1. Typescript 5.5 이상을 사용한다.(아직 베타이다)
+2. 사용자 정의 타입가드를 사용한다.
+
+## 코드 보면 명백한데, 왜 추론을 안해주니?
+
+여러분은 혹시, Typescript 프로그래밍 중, 배열을 필터한 뒤, 타입 추론이 동작하지 않아서 거슬렸던적 있으신가요?
+
+예를 들면 아래와 같은 상황입니다. 만약 여러분이 Typescript를 5.4 이하의 버전을 사용하고 있다면, 아래 코드는 6번 줄 `item.length` 에서 타입에러가 발생합니다. item의 타입이 `string | null | undefined` 이어서 발생하는 타입에러
+
+[TS-playground 코드](https://www.typescriptlang.org/ko/play/?ts=5.4.5#code/MYewdgzgLgBIJGOB-RwOC2A5uwCeOBfRwJy0wLwwG0ByQDIbAUpsB9RogGhjAFcAbR2+sAEwFMAzASzE7taRdBiIBdANwAoaYlSYs0mDAB0fRlE4AnABS7eWgLYBKPAD4YUAJ4AHTiG4xDnI3lz4i0bfwDmRE2U1bhBtAFEAQ2AACwNjCxgAbyCVUEgQRk5VRhBfONdszjBfKGiTGRUAX3KgA)
+![Image.png](https://res.craft.do/user/full/436b4e81-8010-047e-b8e3-b46f2859e87e/doc/63754494-A197-4DBF-A481-847320BAFFF1/219A986C-E0A4-46E3-B877-0B6D580E24C1_2/Nyc06pgD1Bsj4O9gbafMrOeoAwa7rg2yQfEWQXUccH0z/Image.png)
+
+
+이럴 때, 사용할 수 있는 기능이 [사용자 정의 타입가드](https://www.typescriptlang.org/docs/handbook/2/narrowing.html#using-type-predicates)입니다. 사용법은 아래 처럼 `Boolean`  리턴 타입 함수에만 사용가능하며 리턴 타입을 명시하는 위치에  `[인자] is [타입]` 형태로 명시해주면, 스코프 내에서 의도한대로 타입추론이 동작합니다.
+
+[TS-playground 코드](https://www.typescriptlang.org/ko/play/?ts=5.4.5#code/MYewdgzgLgBIJGOB-RwOC2A5uwCeOBfRwJy0wLwwG0ByQDIbAUpsB9RogGhjAFcAbR2+sAEwFMAzASzE7taRdBiIBdANwAoaYlSYs0mDAB0fRlE4AnABS7eWgLYBKAFwxDnI5Ygxo2-gHM8APhhQAngAdOIbpbGeLj4RA7ORCbKatwg2gCiAIbAABYGQbjuAN7RKqCQIIycqowgTunWJZxgTlApJjIqAL4NQA)
+![Image.png](https://res.craft.do/user/full/436b4e81-8010-047e-b8e3-b46f2859e87e/doc/63754494-A197-4DBF-A481-847320BAFFF1/09587043-29DE-4DFD-A506-48693A2FD4BE_2/EALaM7ehWkh7WQ3OL0mZ7yGHwjOmoTnYg1LvaJdZlJEz/Image.png)
+
+---
+
+## 래퍼런스
+
+- [Documentation - Narrowing](https://www.typescriptlang.org/docs/handbook/2/narrowing.html#using-type-predicates)
+- [Announcing TypeScript 5.5 Beta - TypeScript](https://devblogs.microsoft.com/typescript/announcing-typescript-5-5-beta/#inferred-type-predicates)
