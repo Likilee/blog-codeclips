@@ -1,0 +1,34 @@
+# [TS] LiteralUnion를 이용한 행복한 타입 추론 생활
+
+여러분들은 다음과 같은 상황일 때 어떻게 해결한 경험이 있나요?
+
+![image](/images/literalUnion_example_1.png)
+
+[TypeScript Playground Link](https://www.typescriptlang.org/play/?ts=5.5.3#code/C4TwDgpgBAIgogMQIIFUAyAVA+gCQwWTSwyQHEsA5JfOKAXgCgooAfKAIgAtgBbAG3ZNWHAEYB7ACYhBzAPQAqKADoVUebKFt2EgJYA3GcPZhDWgM5gAhgDt2AbgYMAxmOtngUJwCcIl4BDg+CB4Iaw86KAAKYEsAcwpLEIAuWERUTFwCIhJyKhphdy8da1iASnoAPiEJMScAVxCwpW9ff0Dg0OBouISQ0odnHz8AoMau9nZ+hiA)
+
+작성한 의도는 분명히 `tagName` 에 대해서 기본적으로 정의하였던  `DEFAULT_HTML_TAG_NAME` 을 통해 추론에 대해서 도움을 받지만, 추가적인 `Web Components` 와 같이 추가적인 `tagName` 에 대해서도 받을 수 있게 `string` 이라면 제한 두지 않는 상황을 원하였습니다.
+
+결과적으로는 `tagName` 이 `string` 으로 추론되어 정상적으로 추론이 불가능하게 되었습니다.
+
+![image](/images/literalUnion_example_2.png)
+
+
+`string` 은 **모든 문자열에 대한 집합**이기 때문에 즉 `DEFAULT_HTML_TAG_NAME` 은 `string` 에 포함되어 `string` 으로 추론되게 됩니다.
+
+이때 `LiteralType` 에 타입 추론에 대해서 도움은 받으면서 사용할 수 있는 `Utility Type` 이 바로 `LiteralUnion` 입니다.
+
+```typescript
+type Primitive = null | undefined | string | number | boolean | symbol | bigint;
+
+export type LiteralUnion<LiteralType, BaseType extends Primitive> =
+  | LiteralType
+  | (BaseType & Record<never, never>);
+```
+
+`BaseType & Record<never, never>` 를 통해서 결과적으로는 `BaseType` 이지만, 순수하지 않게 됨으로 타입 추론이 가능해집니다.
+
+![image](/images/literalUnion_example_3.png)
+
+[TypeScript Playground](https://www.typescriptlang.org/play/?ts=5.5.3#code/C4TwDgpgBACgTgSwLYOAgbtAvFAdgVwBtCoAfKfXAEwgDMFcIqyoBnYRXAcxYKQCMIcFvwD2owhACGuFqxACJIhFwbAA3AChNoSFAAyqIVMIBVXAlG4APIeDHCAFXAQANFABCU1hGd6IAB721KywiChomAB8UFiaUCx2Dn4Q8SwAFF4+KVAAZFAAShAAxqJwVNaMmHDuVUJRAJRaOi5QACIAogBiAIKm+o4A+gASjgCy+oOOPQDigwByPWMdsWnkAEQAFsBIhOtrUOtiVCD7CQD0AFRQAHR3UJfnB+tUGGcs62DvG6xgMuvNUq4dhQYpwaT2DqSJAQXDAWJQdLAKRceZSGEALgMRjgJnMlhsnV6-SGowmU1mCyWHXc7E4XEasSiaSoomK+BhcJuYIhEChEE5wCRKLRMKa2h5Ukh0NhQvW6yaQA)
+
+이를 통해서 행복한 타입 추론 생활 하세요~!
